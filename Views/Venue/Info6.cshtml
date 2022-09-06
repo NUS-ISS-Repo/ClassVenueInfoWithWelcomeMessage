@@ -1,0 +1,154 @@
+﻿@model ClassVenueInfo.Models.VenueModels
+
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_Layout4.cshtml";
+    var cnt = 0;
+    var pageNum = Request.Params["page"];
+    var display = Request.Params["display"];
+    var displayISSImage = Request.Params["displayISSImage"];
+    var displayGI = Request.Params["displayGI"];
+    var pageVal = "1";
+    if (!pageNum.IsEmpty())
+    {
+        pageVal = pageNum;
+    }
+    var nRec = 5;
+    var nDispSec = "8";
+}
+
+
+<div class="col-md-12">
+    <div>
+        @using (@Html.BeginForm("Info6", "VenueController"))
+        {
+            //Model.VenueModel = null;
+            //ActiveForm.SendKeys("{F11}");
+
+            if (Model.VenueModel != null && Model.VenueModel.Any() && display != "true" && displayISSImage != "true" && displayGI != "true")
+            {
+
+                var grid = new WebGrid(Model.VenueModel, canPage: true, canSort: false, defaultSort: "Status", rowsPerPage: nRec);
+
+                cnt = Model.VenueModel.Count();
+
+                @grid.GetHtml(tableStyle: "table",
+                headerStyle: "header",
+                alternatingRowStyle: "alt",
+                columns: grid.Columns(
+                grid.Column("ClassTime", "Time", style: "time"),
+                grid.Column("CourseDesc", "Event", style: "event"),
+                grid.Column("RoomCode", "Venue", style: "venue")
+                ))
+            }
+
+            else if(display == "true")
+            {
+                <div class="col-md-12 column"><img src="~/Images/welcome-greeting-message3.png" alt="ISS" style="width:100%;height:919px;"></div>             
+            }
+            else 
+            if (displayISSImage == "true")
+            {
+                <div class="col-md-12 column"><img src="~/Images/Welcome-to-ISS.png" alt="ISS" style="width:100%;height:919px;"></div>
+            }
+            else
+            if (displayGI == "true")
+            {
+                <div class="col-md-12 column"><img src="~/Images/KeyVisual-SA52-Final.png" alt="ISS" style="width:100%;height:919px;"></div>
+            }
+        }
+
+        @{ if (cnt > nRec && (pageVal.IsEmpty() || pageVal.Equals("1")))
+            {
+                Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=2");
+            }
+            //Only 2 pages
+            else if ((cnt > 0 && cnt <= (nRec * 2)) && pageVal.Equals("2"))
+            {
+                //Response.AddHeader("REFRESH", nDispSec + ";URL=Info4?page=1");
+                if (@ViewBag.DACourseExists == true)
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?display=true");
+                }
+                else
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?displayISSImage=true");
+                    //Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=1");
+                }
+            }
+            else if (cnt > (nRec * 2) && pageVal.Equals("2"))
+            {
+                Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=3");
+            }
+            else if (cnt > (nRec * 3) && pageVal.Equals("3"))
+            {
+                Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=4");
+            }
+            //only 3 pages
+            else if ((cnt > 0 && cnt <= (nRec * 3)) && pageVal.Equals("3"))
+            {
+                //Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=1");
+                if (@ViewBag.DACourseExists == true)
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?display=true");
+                }
+                else
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?displayISSImage=true");
+                    //Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=1");
+                }
+
+            }
+            //only 4 pages
+            else if (cnt > 0 && cnt <= (nRec * 4) && pageVal.Equals("4"))
+            {
+                //Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=1");
+                if (@ViewBag.DACourseExists == true)
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?display=true");
+                }
+                else
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?displayISSImage=true");
+                    //Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?page=1");
+                }
+            }
+            else if (cnt > 0 && cnt <= nRec)
+            {
+                if (@ViewBag.DACourseExists == true)
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?display=true");
+                }
+                else if (displayISSImage != "true")
+                {
+                    Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?displayISSImage=true");
+                }
+                else
+                {
+                    Response.AddHeader("REFRESH", "300;URL=Info6?page=1");
+                }
+
+            }
+            else if (display == "true")
+            {
+                Response.AddHeader("REFRESH", nDispSec + ";URL=Info6?displayISSImage=true");
+
+            }
+            else if (displayISSImage == "true")
+            {
+                //Response.AddHeader("REFRESH", "8;URL=Info6?page=1");
+                Response.AddHeader("REFRESH", "8;URL=Info6?displayGI=true");
+            }
+            else if (displayGI == "true")
+            {
+                Response.AddHeader("REFRESH", "8;URL=Info6?page=1");
+            }
+
+
+        }
+    </div>
+    </div>
+
+
+
+

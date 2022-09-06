@@ -1,0 +1,86 @@
+﻿@model ClassVenueInfo.Models.VenueModels
+
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var cnt = 0;
+    var pageNum = Request.Params["page"];
+    var pageVal = "1";
+    if (!pageNum.IsEmpty()) {
+        pageVal = pageNum;
+    }
+    var nRec = 100;
+    var nDispSec = "8";
+}
+
+<div class="col-md-12" style="padding-top:20px; padding-bottom:20px">
+    <div class="col-md-7 column"><b><font size="6" color="#084B8A">@String.Format("{0:dddd, d MMM yyyy}", DateTime.Now) <span id="timer"></span></font></b></div>
+    <div class="col-md-2">&nbsp;</div>
+    <div class="col-md-3"><img alt="ISS" src="~/Images/nus-iss-logo.jpg"></div>
+</div>
+
+        <div class="col-md-12">
+                
+                @using (@Html.BeginForm("Info", "VenueController"))
+                {
+                    //Model.VenueModel = null;
+                    //ActiveForm.SendKeys("{F11}");
+                    
+                    if (Model.VenueModel != null && Model.VenueModel.Any())
+                    {
+                        var grid = new WebGrid(Model.VenueModel, canPage: true, canSort: false, defaultSort: "Status", rowsPerPage: nRec);
+
+                        cnt = Model.VenueModel.Count();
+                        
+                            @grid.GetHtml(tableStyle: "table",
+                            headerStyle: "header",
+                            alternatingRowStyle: "alt",
+                            columns: grid.Columns(
+                             grid.Column("ClassTime", "Time", style: "time"),
+                             grid.Column("CourseDesc", "Event", style: "event"),
+                             grid.Column("RoomCode", "Venue", style: "venue")
+                             )) 
+                        
+                    }
+                    else
+                    {
+                        <div class="col-md-12 column">&nbsp;</div>
+                        <div class="col-md-12 column">&nbsp;</div>
+                        <div class="col-md-12 column">&nbsp;</div>
+                        <div class="col-md-12 column">&nbsp;</div>
+                        <div class="col-md-2 column">&nbsp;</div>
+                        <div class="col-md-8 column">
+                            <p style="font-size: 80px; color: #084B8A; text-align:center"><b>Welcome to <br/>Institute of Systems Science</b></p>
+                        </div>
+                        <div class="col-md-2 column">&nbsp;</div>
+                    }
+
+                }
+
+           @{ if (cnt > nRec && (pageVal.IsEmpty() || pageVal.Equals("1")))
+              {
+                  Response.AddHeader("REFRESH", nDispSec + ";URL=Info?page=2");
+              }
+              else if ((cnt > 0 && cnt <= (nRec*2)) && pageVal.Equals("2"))
+              {
+                  Response.AddHeader("REFRESH", nDispSec + ";URL=Info?page=1");
+              }
+              else if (cnt > (nRec * 2) && pageVal.Equals("2"))
+              {
+                  Response.AddHeader("REFRESH", nDispSec + ";URL=Info?page=3");
+              }
+              else if (cnt > (nRec * 2) && pageVal.Equals("3"))
+              {
+                  Response.AddHeader("REFRESH", nDispSec + ";URL=Info?page=1");
+              }
+              else if (cnt > 0 && cnt <= nRec)
+              {
+                  Response.AddHeader("REFRESH", "300;URL=Info?page=1");
+              }
+              
+            }
+ </div>
+    
+
+
+
